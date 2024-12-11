@@ -6,9 +6,9 @@ import com.pluralsight.model.contract.Contract;
 import java.util.List;
 
 public interface IVehicleDAO {
-    Vehicle add(Vehicle Vehicle);
-    List<Vehicle> getAlLVehicles();
-    Vehicle getVehicleByID(int vehicleID);
+    Vehicle insert(Vehicle Vehicle);
+    List<Vehicle> getAllVehicles();
+    Vehicle getVehicleByVin(int vehicleID);
     void update(int vehicleID, Vehicle vehicle);
     void delete(int vehicleID);
 }

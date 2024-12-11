@@ -4,9 +4,10 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 
+
 @EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder(toBuilder = true)
+@SuperBuilder
 public class LeaseContract extends Contract {
     private double expectedEndingValue;
     private double leaseFee;
@@ -25,4 +26,6 @@ public class LeaseContract extends Contract {
         monthlyPayment /= 100;
         return monthlyPayment;
     }
+
+    
 }

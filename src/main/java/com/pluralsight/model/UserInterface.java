@@ -1,9 +1,11 @@
 package com.pluralsight.model;
 
+import com.pluralsight.dao.impl.JdbcContractDAO;
+import com.pluralsight.dao.impl.JdbcCustomerDAO;
+import com.pluralsight.dao.impl.JdbcVehicleDAO;
 import com.pluralsight.db.DataManager;
 import com.pluralsight.model.Vehicle;
 import com.pluralsight.model.contract.Contract;
-import com.pluralsight.model.contract.Dealership;
 import com.pluralsight.model.contract.LeaseContract;
 import com.pluralsight.model.contract.SalesContract;
 
@@ -11,9 +13,9 @@ import java.util.List;
 import java.util.Scanner;
 
 public class UserInterface {
-
-    private Dealership dealership;
     private Scanner scanner;
+    private JdbcVehicleDAO jdbcVehicleDAO;
+    private JdbcContractDAO jdbcContractDAO;
 
     public UserInterface() {
         scanner = new Scanner(System.in);
@@ -84,21 +86,16 @@ public class UserInterface {
         int vin = scanner.nextInt();
         scanner.nextLine();
 
-        Vehicle vehicle = null;
-
-        for (Vehicle vehicleInDealership : dealership.getAllVehicles()) {
-            if (vehicleInDealership.getVin() == vin) {
-                vehicle = vehicleInDealership;
-            }
-        }
+        Vehicle vehicle = jdbcVehicleDAO.getVehicleByVin(vin);
 
         if (vehicle == null) {
             System.out.println("Vehicle not found. Please try again.");
             return;
         }
 
-        System.out.print("Enter the contract date (YYYYMMDD): ");
-        String contractDate = scanner.nextLine();
+        System.out.print("Enter the contract year (YYYY): ");
+        int contractDate = scanner.nextInt();
+        scanner.nextLine();
 
         System.out.print("Enter the customer name: ");
         String customerName = scanner.nextLine();
@@ -148,11 +145,11 @@ public class UserInterface {
             return;
         }
 
-        ContractFileManager.saveContract(contract);
-        dealership.removeVehicle(vehicle);
-
-        DealershipFileManager manager = new DealershipFileManager();
-        manager.saveDealership(dealership);
+//        ContractFileManager.saveContract(contract);
+//        dealership.removeVehicle(vehicle);
+//
+//        DealershipFileManager manager = new DealershipFileManager();
+//        manager.saveDealership(dealership);
 
         System.out.println("Contract saved successfully!");
     }
@@ -162,7 +159,7 @@ public class UserInterface {
         double min = scanner.nextDouble();
         System.out.print("Enter maximum price: ");
         double max = scanner.nextDouble();
-        List<Vehicle> vehicles = dealership.getVehiclesByPrice(min, max);
+        List<Vehicle> vehicles = jdbcVehicleDAO.getVehiclesByPriceRange(min, max);
         displayVehicles(vehicles);
     }
 
@@ -171,7 +168,7 @@ public class UserInterface {
         String make = scanner.nextLine();
         System.out.print("Enter model: ");
         String model = scanner.nextLine();
-        List<Vehicle> vehicles = dealership.getVehiclesByMakeModel(make, model);
+        List<Vehicle> vehicles = jdbcVehicleDAO.getVehiclesByMakeAndModel(make, model);
         displayVehicles(vehicles);
     }
 
@@ -180,14 +177,14 @@ public class UserInterface {
         int min = scanner.nextInt();
         System.out.print("Enter maximum year: ");
         int max = scanner.nextInt();
-        List<Vehicle> vehicles = dealership.getVehiclesByYear(min, max);
+        List<Vehicle> vehicles = jdbcVehicleDAO.getVehiclesByYearRange(min, max);
         displayVehicles(vehicles);
     }
 
     public void processGetByColorRequest() {
         System.out.print("Enter color: ");
         String color = scanner.nextLine();
-        List<Vehicle> vehicles = dealership.getVehiclesByColor(color);
+        List<Vehicle> vehicles = jdbcVehicleDAO.getVehiclesByColor(color);
         displayVehicles(vehicles);
     }
 
@@ -196,19 +193,19 @@ public class UserInterface {
         int min = scanner.nextInt();
         System.out.print("Enter maximum mileage: ");
         int max = scanner.nextInt();
-        List<Vehicle> vehicles = dealership.getVehiclesByMileage(min, max);
+        List<Vehicle> vehicles = jdbcVehicleDAO.getVehiclesByMileageRange(min, max);
         displayVehicles(vehicles);
     }
 
     public void processGetByVehicleTypeRequest() {
         System.out.print("Enter vehicle type: ");
         String vehicleType = scanner.nextLine();
-        List<Vehicle> vehicles = dealership.getVehiclesByType(vehicleType);
+        List<Vehicle> vehicles = jdbcVehicleDAO.getVehiclesByType(vehicleType);
         displayVehicles(vehicles);
     }
 
     public void processGetAllVehiclesRequest() {
-        List<Vehicle> vehicles = dealership.getAllVehicles();
+        List<Vehicle> vehicles = jdbcVehicleDAO.getAllVehicles();
         displayVehicles(vehicles);
     }
 
@@ -243,36 +240,21 @@ public class UserInterface {
 
         Vehicle vehicle = new Vehicle(vin, year, make, model, type, color, mileage, price);
 
-        dealership.addVehicle(vehicle);
+        jdbcVehicleDAO.insert(vehicle);
         System.out.println("Vehicle added successfully!");
-        DealershipFileManager manager = new DealershipFileManager();
-        manager.saveDealership(dealership);
     }
 
     public void processRemoveVehicleRequest() {
         System.out.print("Enter the VIN of the vehicle you wish to remove: ");
         int vin = scanner.nextInt();
 
-        boolean vehicleRemoved = false;
-        for (Vehicle vehicle : dealership.getAllVehicles()) {
-            if (vehicle.getVin() == vin) {
-                dealership.removeVehicle(vehicle);
-                System.out.println("Vehicle removed successfully!");
-                vehicleRemoved = true;
-                break;
-            }
-        }
-
-        if (!vehicleRemoved) {
-            System.out.println("Vehicle not found. Please try again.");
-            return;
-        }
-
-
+        jdbcVehicleDAO.delete(vin);
     }
 
     private void init() {
         DataManager dataManager = new DataManager("jdbc:mysql://localhost:3306/northwind", "root", "P@ssw0rd");
+        jdbcVehicleDAO = new JdbcVehicleDAO(dataManager.getDataSource());
+        jdbcContractDAO = new JdbcContractDAO(dataManager.getDataSource());
     }
 
     private void displayVehicles(List<Vehicle> vehicles) {

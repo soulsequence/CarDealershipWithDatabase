@@ -1,8 +1,5 @@
 package com.pluralsight.db;
 
-import com.pluralsight.dao.impl.JdbcContractDAO;
-import com.pluralsight.dao.impl.JdbcDealershipDAO;
-import com.pluralsight.dao.impl.JdbcVehicleDAO;
 import lombok.Getter;
 import org.apache.commons.dbcp2.BasicDataSource;
 
