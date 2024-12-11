@@ -248,6 +248,7 @@ public class UserInterface {
     public void processRemoveVehicleRequest() {
         System.out.print("Enter the VIN of the vehicle you wish to remove: ");
         int vin = scanner.nextInt();
+        scanner.nextLine();
 
         jdbcVehicleDAO.delete(vin);
     }

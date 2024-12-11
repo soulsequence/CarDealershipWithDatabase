@@ -19,11 +19,11 @@ public class JdbcVehicleDAO implements IVehicleDAO {
     // CRUD operations
     @Override
     public Vehicle insert(Vehicle vehicle) {
-        String sql = "INSERT INTO Vehicles (VIN, Year, Make, Model, VehicleType, Color, Odometer, Price) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Vehicles (VIN, Year, Make, Model, VehicleType, Color, Odometer, Price, Sold) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, vehicle.getVin());
             statement.setInt(2, vehicle.getYear());
@@ -33,20 +33,12 @@ public class JdbcVehicleDAO implements IVehicleDAO {
             statement.setString(6, vehicle.getColor());
             statement.setInt(7, vehicle.getOdometer());
             statement.setDouble(8, vehicle.getPrice());
+            statement.setBoolean(9, false);
 
             int affectedRows = statement.executeUpdate();
 
             if (affectedRows == 0) {
                 throw new SQLException("Creating vehicle failed, no rows affected.");
-            }
-
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    int generatedID = generatedKeys.getInt(1);
-                    vehicle.setVin(generatedID);
-                } else {
-                    throw new SQLException("Creating vehicle failed, no ID obtained.");
-                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
