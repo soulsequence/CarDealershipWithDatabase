@@ -179,6 +179,7 @@ public class UserInterface {
         int max = scanner.nextInt();
         List<Vehicle> vehicles = jdbcVehicleDAO.getVehiclesByYearRange(min, max);
         displayVehicles(vehicles);
+        scanner.nextLine();
     }
 
     public void processGetByColorRequest() {
@@ -252,7 +253,7 @@ public class UserInterface {
     }
 
     private void init() {
-        DataManager dataManager = new DataManager("jdbc:mysql://localhost:3306/northwind", "root", "P@ssw0rd");
+        DataManager dataManager = new DataManager("jdbc:mysql://localhost:3306/cardealership", "root", "P@ssw0rd");
         jdbcVehicleDAO = new JdbcVehicleDAO(dataManager.getDataSource());
         jdbcContractDAO = new JdbcContractDAO(dataManager.getDataSource());
     }
