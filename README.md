@@ -82,7 +82,8 @@ Follow these steps to get your application running within IntelliJ IDEA:
 ## Unique Features:
 - I added an extra DAO that made sense within the context of the program.
 ![CustomerDAO](imgs/CustomerDAO.PNG)
-- ContractsDAO uses one DAO instead of two separate LeaseContractsDAO and SalesContractsDAO
+- ContractsDAO uses one DAO instead of two separate LeaseContractsDAO and SalesContractsDAO.
+- Use of lombok to get practice with the dependency.
 
 ## Future Work
 
@@ -92,7 +93,7 @@ Follow these steps to get your application running within IntelliJ IDEA:
 
 - [Workbook 8](https://github.com/RayMaroun/yearup-fall-section-4-2024/blob/master/pluralsight/java-development/workbook-8/jdbc-crud/src/main/java/com/pluralsight/db/DataManager.java#L66)
 - [Workbook 9](https://github.com/RayMaroun/yearup-fall-section-4-2024/blob/master/pluralsight/java-development/workbook-9/NorthwindTradersSpringBoot4/src/main/java/com/pluralsight/NorthwindTradersSpringBoot4/dao/impl/JdbcProductDao.java)
-
+- [Lombok Documentation](https://projectlombok.org/features/)
 ## Thanks
 
 Thank you to Raymond Maroun for continuous support and guidance.
