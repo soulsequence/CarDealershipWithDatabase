@@ -144,12 +144,6 @@ public class UserInterface {
             return;
         }
 
-//        ContractFileManager.saveContract(contract);
-//        dealership.removeVehicle(vehicle);
-//
-//        DealershipFileManager manager = new DealershipFileManager();
-//        manager.saveDealership(dealership);
-
         System.out.println("Contract saved successfully!");
     }
 
