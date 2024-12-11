@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @SuperBuilder
 public abstract class Contract {
     private int contractID;
-    private String date;
+    private int date;
     private String customerName;
     private String customerEmail;
     private Vehicle vehicleSold;

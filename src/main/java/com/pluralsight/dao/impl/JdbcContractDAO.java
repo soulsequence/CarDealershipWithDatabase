@@ -22,13 +22,14 @@ public class JdbcContractDAO implements IContractDAO {
 
     @Override
     public Contract insert(Contract contract) {
-        String sql = "INSERT INTO Contracts (Date, isSalesContract, Financed, VIN, CustomerID)";
+        String sql = "INSERT INTO Contracts (Date, isSalesContract, Financed, VIN, CustomerID)" +
+                "VALUES (?, ?, ?, ?, ?)";
 
         try (Connection connection = dataSource.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             boolean isSalesContract = contract instanceof SalesContract;
 
-            statement.setString(1, contract.getDate());
+            statement.setInt(1, contract.getDate());
             statement.setBoolean(2, isSalesContract);
             if(isSalesContract) {
                 statement.setBoolean(3,
@@ -91,7 +92,7 @@ public class JdbcContractDAO implements IContractDAO {
                 );
 
                 int contractID = rs.getInt("ContractID");
-                String date = rs.getString("Date");
+                int date = rs.getInt("Date");
                 boolean isSalesContract = rs.getBoolean("isSalesContract");
                 boolean isFinanced = rs.getBoolean("isFinanced");
                 int vin = rs.getInt("VIN");
@@ -124,22 +125,68 @@ public class JdbcContractDAO implements IContractDAO {
 
     @Override
     public Contract getContractByID(int id) {
-        String sql = "SELECT * FROM Contracts WHERE ContractID = ?";
+        String sql = "SELECT * FROM Contracts c "
+                + "JOIN Vehicles v ON c.VIN = v.VIN "
+                + "JOIN Customers cu ON c.CustomerID = cu.CustomerID "
+                + "WHERE c.ContractID = ?";
+
         try (Connection connection = dataSource.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, id);
 
+            statement.setInt(1, id);
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
+
+                    // Create Vehicle
+                    Vehicle vehicle = new Vehicle(
+                            rs.getInt("VIN"),
+                            rs.getInt("Year"),
+                            rs.getString("Make"),
+                            rs.getString("Model"),
+                            rs.getString("VehicleType"),
+                            rs.getString("Color"),
+                            rs.getInt("Odometer"),
+                            rs.getDouble("Price")
+                    );
+
+                    // Create Customer
+                    Customer customer = new Customer(
+                            rs.getInt("CustomerID"),
+                            rs.getString("Name"),
+                            rs.getString("Email")
+                    );
+
                     int contractID = rs.getInt("ContractID");
-                    int Date = rs.getInt("Date");
-                    boolean financeOption = rs.getBoolean("isSalesContract");
-                    boolean financed 
+                    int date = rs.getInt("Date");
+                    boolean isSalesContract = rs.getBoolean("isSalesContract");
+                    boolean financed = rs.getBoolean("Financed");
+                    int VIN = rs.getInt("VIN");
+                    int CustomerID = rs.getInt("CustomerID");
+
+                    if (isSalesContract) {
+                        SalesContract salesContract = SalesContract.builder()
+                                .contractID(contractID)
+                                .date(date)
+                                .financeOption(financed)
+                                .vehicleSold(vehicle)
+                                .customer(customer)
+                                .build();
+                        return salesContract;
+                    } else if (!isSalesContract) {
+                        LeaseContract leaseContract = LeaseContract.builder()
+                                .contractID(contractID)
+                                .date(date)
+                                .vehicleSold(vehicle)
+                                .customer(customer)
+                                .build();
+                        return leaseContract;
+                    }
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     @Override
@@ -152,7 +199,7 @@ public class JdbcContractDAO implements IContractDAO {
 
             boolean isSalesContract = contract instanceof SalesContract;
 
-            statement.setString(1, contract.getDate());
+            statement.setInt(1, contract.getDate());
             statement.setBoolean(2, isSalesContract);
 
             if(isSalesContract) {
