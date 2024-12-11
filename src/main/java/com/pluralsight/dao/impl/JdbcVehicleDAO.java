@@ -42,7 +42,8 @@ public class JdbcVehicleDAO implements IVehicleDAO {
 
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    vehicle.setVin(generatedKeys.getInt(1));
+                    int generatedID = generatedKeys.getInt(1);
+                    vehicle.setVin(generatedID);
                 } else {
                     throw new SQLException("Creating vehicle failed, no ID obtained.");
                 }
