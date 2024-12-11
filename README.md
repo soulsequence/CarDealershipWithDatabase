@@ -56,8 +56,8 @@ Instructions on how to set up and run the project using IntelliJ IDEA.
 
 1. Open your file explorer.
 2. Use a program like SQLWorkbench to open the schema files.
-3. Run the CarDealershipDatabase first.
-4. Run the CarDealershiPopulate second.
+3. Run the `CarDealershipDatabase` first.
+4. Run the `CarDealershiPopulate` second.
 
 ### Running the Application in IntelliJ
 
@@ -80,7 +80,7 @@ Follow these steps to get your application running within IntelliJ IDEA:
 ![Main-Menu](imgs/Main%20Menu.PNG)
 
 ## Unique Features:
-- I added an extra DAO that made sense within the context of the program.
+- I added an extra customerDAO that made sense within the context of the program.
 ![CustomerDAO](imgs/CustomerDAO.PNG)
 - ContractsDAO uses one DAO instead of two separate LeaseContractsDAO and SalesContractsDAO.
 - Use of lombok to get practice with the dependency.
