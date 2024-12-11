@@ -1,5 +1,6 @@
 package com.pluralsight.model;
 
+import com.pluralsight.db.DataManager;
 import com.pluralsight.model.Vehicle;
 import com.pluralsight.model.contract.Contract;
 import com.pluralsight.model.contract.Dealership;
@@ -267,13 +268,11 @@ public class UserInterface {
             return;
         }
 
-        DealershipFileManager manager = new DealershipFileManager();
-        manager.saveDealership(dealership);
+
     }
 
     private void init() {
-        DealershipFileManager manager = new DealershipFileManager();
-        dealership = manager.getDealership();
+        DataManager dataManager = new DataManager("jdbc:mysql://localhost:3306/northwind", "root", "P@ssw0rd");
     }
 
     private void displayVehicles(List<Vehicle> vehicles) {

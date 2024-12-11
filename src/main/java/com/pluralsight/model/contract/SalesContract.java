@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder(toBuilder = true)
+@SuperBuilder
 public class SalesContract extends Contract{
     private double salesTaxAmount;
     private double recordingFee;

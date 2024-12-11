@@ -9,8 +9,9 @@ import java.math.BigDecimal;
 @Data
 @Getter
 @Setter
-@SuperBuilder(toBuilder = true)
+@SuperBuilder
 public abstract class Contract {
+    private int contractID;
     private String date;
     private String customerName;
     private String customerEmail;

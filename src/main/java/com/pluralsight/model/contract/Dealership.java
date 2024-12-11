@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 @Data
 @AllArgsConstructor
 public class Dealership {
+    private int dealershipID;
     private String name;
     private String address;
     private String phone;
