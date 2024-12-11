@@ -5,7 +5,7 @@ import com.pluralsight.model.contract.Contract;
 import java.util.List;
 
 public interface IContractDAO {
-    Contract add(Contract contract);
+    Contract insert(Contract contract);
     List<Contract> getAllContracts();
     Contract getContractByID(int contractID);
     void update(int contractID, Contract contract);

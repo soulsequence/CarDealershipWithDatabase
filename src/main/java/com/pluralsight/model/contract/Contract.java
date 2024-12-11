@@ -1,5 +1,6 @@
 package com.pluralsight.model.contract;
 
+import com.pluralsight.model.Customer;
 import com.pluralsight.model.Vehicle;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -16,6 +17,7 @@ public abstract class Contract {
     private String customerName;
     private String customerEmail;
     private Vehicle vehicleSold;
+    private Customer customer;
     private double totalPrice;
     private double monthlyPayment;
 
