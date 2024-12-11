@@ -16,6 +16,7 @@ public class UserInterface {
     private Scanner scanner;
     private JdbcVehicleDAO jdbcVehicleDAO;
     private JdbcContractDAO jdbcContractDAO;
+    private JdbcCustomerDAO jdbcCustomerDAO;
 
     public UserInterface() {
         scanner = new Scanner(System.in);
@@ -97,11 +98,11 @@ public class UserInterface {
         int contractDate = scanner.nextInt();
         scanner.nextLine();
 
-        System.out.print("Enter the customer name: ");
-        String customerName = scanner.nextLine();
+        System.out.print("Enter the customer id: ");
+        int customerId = scanner.nextInt();
+        scanner.nextLine();
 
-        System.out.print("Enter the customer email: ");
-        String customerEmail = scanner.nextLine();
+        Customer customer = jdbcCustomerDAO.getCustomerByID(customerId);
 
         System.out.print("Is it a sale or lease? (sale/lease): ");
         String contractType = scanner.nextLine();
@@ -118,28 +119,26 @@ public class UserInterface {
 
             contract = SalesContract.builder()
                     .date(contractDate)
-                    .customerName(customerName)
-                    .customerEmail(customerEmail)
+                    .customer(customer)
                     .vehicleSold(vehicle)
                     .salesTaxAmount(salesTaxAmount)
                     .recordingFee(recordingFee)
                     .processingFee(processingFee)
                     .financeOption(finance)
                     .build();
-
+            jdbcContractDAO.insert(contract);
         } else if (contractType.equalsIgnoreCase("lease")) {
             double expectedEndingValue = vehicle.getPrice() / 2;
             double leaseFee = vehicle.getPrice() * 0.07;
 
             contract = LeaseContract.builder()
                     .date(contractDate)
-                    .customerName(customerName)
-                    .customerEmail(customerEmail)
+                    .customer(customer)
                     .vehicleSold(vehicle)
                     .expectedEndingValue(expectedEndingValue)
                     .leaseFee(leaseFee)
                     .build();
-
+            jdbcContractDAO.insert(contract);
         } else {
             System.out.println("Invalid contract type. Please try again.");
             return;
@@ -257,6 +256,7 @@ public class UserInterface {
         DataManager dataManager = new DataManager("jdbc:mysql://localhost:3306/cardealership", "root", "P@ssw0rd");
         jdbcVehicleDAO = new JdbcVehicleDAO(dataManager.getDataSource());
         jdbcContractDAO = new JdbcContractDAO(dataManager.getDataSource());
+        jdbcCustomerDAO = new JdbcCustomerDAO(dataManager.getDataSource());
     }
 
     private void displayVehicles(List<Vehicle> vehicles) {

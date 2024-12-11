@@ -26,7 +26,7 @@ public class JdbcContractDAO implements IContractDAO {
                 "VALUES (?, ?, ?, ?, ?)";
 
         try (Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            PreparedStatement statement = connection.prepareStatement(sql)) {
             boolean isSalesContract = contract instanceof SalesContract;
 
             statement.setInt(1, contract.getDate());
@@ -34,6 +34,9 @@ public class JdbcContractDAO implements IContractDAO {
             if(isSalesContract) {
                 statement.setBoolean(3,
                         ((SalesContract) contract).isFinanceOption());
+            } else {
+                statement.setBoolean(3,
+                        false);
             }
             statement.setInt(4, contract.getVehicleSold().getVin());
             statement.setInt(5, contract.getCustomer().getCustomerID());
@@ -42,15 +45,6 @@ public class JdbcContractDAO implements IContractDAO {
 
             if (affectedRows == 0) {
                 throw new SQLException("Creating contract failed, no rows affected.");
-            }
-
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    int generatedID = generatedKeys.getInt(1);
-                    contract.setContractID(generatedID);
-                } else {
-                    throw new SQLException("Creating contract failed, no ID obtained.");
-                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
